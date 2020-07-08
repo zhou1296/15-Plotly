@@ -1,7 +1,7 @@
 function getPlot(id){
     d3.json("samples.json").then((data)=>{
         console.log(data);
-        var samples=data.samples.filter(s=>s.id.toString==id)[0];
+        var samples=data.samples.filter(s=>s.id==id)[0];
         console.log(samples);
 
         var OTU_top = (samples.otu_ids.slice(0, 10)).reverse();
@@ -20,7 +20,7 @@ function getPlot(id){
             orientation: "h",
             };
         var data=[trace1];
-        plotlly.newPlot("bar",data,trace1);
+        Plotly.newPlot("bar",data,trace1);
 
         var trace2={
             x:OTU_id,
@@ -75,11 +75,29 @@ function getInfo(id) {
 function update(){
     var dropdown=d3.select("#selDataset");
 
-    d3.json("sample.json").then((data)=>{
-        data.name.forEach(function(name){
-            dropdown.append("option").text(name).property("value")
-        })})
+    d3.json("samples.json").then((data)=>{
+        data.names.forEach((name)=>{
+            dropdown.append("option").text(name).property("value",name);
+        })
+    var first_id=data.names[0];
+    getInfo(first_id);
+    getPlot(first_id);
+    });
+
     };
 update();
 
 //???how could I get the ID that selected to call getplot() and getinfo()?
+function optionChanged(id){
+    getPlot(id);
+    getInfo(id);
+
+};
+
+// function init(){
+//     var first_id=d3.select("#selDataset");
+//     d3.json("samples.json").then((data)=>{
+//         data.names[0]
+//     })
+
+// };
